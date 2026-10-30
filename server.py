@@ -39,7 +39,7 @@ def handle_client (conn,addr):
 def main():
     print("Starting the server")
     server = socket.socket(socket.AF_INET,socket.SOCK_STREAM) ## used IPV4 and TCP connection
-    server.bind(ADDR) # bind the address
+    server.bind("0.0.0.0",4450) # bind the address
     server.listen() ## start listening
     print(f"server is listening on {IP}: {PORT}")
     while True:
