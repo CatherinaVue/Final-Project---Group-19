@@ -2,8 +2,8 @@ import os
 import socket
 import threading
 
-IP = "10.221.51.50"
-PORT = 43237
+IP = "10.221.51.48"
+PORT = 4450
 ADDR = (IP,PORT)
 SIZE = 1024
 FORMAT = "utf-8"
