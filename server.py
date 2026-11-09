@@ -14,6 +14,21 @@ def handle_client (conn,addr):
 
     print(f"[NEW CONNECTION] {addr} connected.")
     conn.send("OK@Welcome to the server".encode(FORMAT))
+### Ask Clients for User and Pass
+    conn.send("AUTH@Username: ".encode(FORMAT))
+    username = conn.recv(SIZE).decode(FORMAT)
+
+    conn.send("AUTH@Password: ".encode(FORMAT))
+    password = conn.recv(SIZE).decode(FORMAT)
+
+    if username == "Client1" and password == 1234:
+        conn.send("OK@Login successful!".encode(FORMAT))
+        print(f"{username} logged in.")
+    else:
+        conn.send("ERROR@Invalid username or password".encode(FORMAT))
+        print(f"[FAILED LOGIN] {addr}")
+        conn.close()
+        return
 
     while True:
         data =  conn.recv(SIZE).decode(FORMAT)
