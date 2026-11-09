@@ -30,6 +30,24 @@ def main():
         if cmd == "TASK":
             client.send(cmd.encode(FORMAT))
 
+        elif cmd == "UPLOAD":
+            client.send(cmd.encode(FORMAT))
+
+        elif cmd == "DOWNLOAD":
+            client.send(cmd.encode(FORMAT))
+
+        elif cmd == "DELETE":
+            client.send(cmd.encode(FORMAT))
+
+        elif cmd == "DIR":
+            client.send(cmd.encode(FORMAT))
+
+        elif cmd == "SUBCREATE":
+            client.send(cmd.encode(FORMAT))
+
+        elif cmd == "SUBDELETE":
+            client.send(cmd.encode(FORMAT))
+
         elif cmd == "LOGOUT":
             client.send(cmd.encode(FORMAT))
             break
