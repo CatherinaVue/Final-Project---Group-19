@@ -101,6 +101,14 @@ def handle_client (conn,addr):
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
 
+        elif cmd == "DIR":
+            files=os.listdir(SERVER_PATH)
+            if len(files)==0:
+                send_data+="Server directory is empty"
+            else:
+                send_data+="\n".join(files)
+            conn.sendall(send_data.encode(FORMAT))
+
         elif cmd == "TASK": 
             send_data += "LOGOUT from the server.\n"
 
