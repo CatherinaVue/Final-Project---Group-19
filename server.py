@@ -9,6 +9,15 @@ SIZE = 1024
 FORMAT = "utf-8"
 SERVER_PATH = "server"
 
+def recv_exact(conn, length):
+    data=b""
+    while len(data)<length:
+        packet=conn.recv(length-len(data))
+        if not packet:
+            raise ConnectionError("Connection lost")
+        data+=packet
+    return data
+
 ### to handle the clients
 def handle_client (conn,addr):
 
@@ -39,6 +48,24 @@ def handle_client (conn,addr):
 
         if cmd == "LOGOUT":
             break
+
+        elif cmd == "UPLOAD":
+            conn.sendall("READY".encode(FORMAT))
+            filename_length=struct.unpack("!I", recv_exact(conn, 4))[0]
+            filename=recv_exact(conn, filename_length).decode(FORMAT)
+            filename=os.path.basename(filename)
+            filesize=struct.unpack("!Q", recv_exact(conn, 8))[0]
+            os.makedirs(SERVER_PATH, exist_ok=True)
+            filepath=os.path.join(SERVER_PATH, filename)
+            received=0
+            with open(filepath, "wb") as file:
+                while received<filesize:
+                    data=conn.recv(min(SIZE, filesize-received))
+                    if not data:
+                        break
+                    file.write(data)
+                    received+=len(data)
+            print(f"[UPLOAD] Received {filename}")
 
         elif cmd == "TASK": 
             send_data += "LOGOUT from the server.\n"
