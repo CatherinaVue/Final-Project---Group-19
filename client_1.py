@@ -100,7 +100,10 @@ def main():
                 print(response)
 
         elif cmd == "DELETE":
-            client.send(cmd.encode(FORMAT))
+            filename=input("Enter filename: ")
+            client.sendall(f"DELETE@{filename}".encode(FORMAT))
+            response=client.recv(SIZE).decode(FORMAT)
+            print(response)
 
         elif cmd == "DIR":
             client.send(cmd.encode(FORMAT))
