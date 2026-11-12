@@ -1,6 +1,7 @@
 import os
 import socket
 import threading
+import struct
 
 IP = "10.200.102.77"
 PORT = 4450
@@ -66,6 +67,28 @@ def handle_client (conn,addr):
                     file.write(data)
                     received+=len(data)
             print(f"[UPLOAD] Received {filename}")
+
+        elif cmd == "DOWNLOAD":
+            conn.sendall(b"READY")
+            filename=conn.recv(SIZE).decode(FORMAT)
+            filename=os.path.basename(filename)
+            filepath=os.path.join(SERVER_PATH, filename)
+            if not os.path.isfile(filepath):
+                conn.sendall(b"ERROR@File not found")
+            else:
+                conn.sendall(b"FILE")
+                filename_bytes=filename.encode(FORMAT)
+                filesize=os.path.getsize(filepath)
+                conn.sendall(struct.pack("!I", len(filename_bytes)))
+                conn.sendall(filename_bytes)
+                conn.sendall(struct.pack("!Q", filesize))
+                with open(filepath, "rb") as file:
+                    while True:
+                        data=file.read(SIZE)
+                        if not data:
+                            break
+                        conn.sendall(data)
+                print(f"[DOWNLOAD] Sent {filename}")
 
         elif cmd == "TASK": 
             send_data += "LOGOUT from the server.\n"
