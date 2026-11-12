@@ -1,6 +1,6 @@
 import os
 import socket
-
+import struct
 
 # IP = "192.168.1.101" #"localhost"
 IP = "10.200.102.77"
@@ -9,6 +9,24 @@ ADDR = (IP,PORT)
 SIZE = 1024 ## byte .. buffer size
 FORMAT = "utf-8"
 SERVER_DATA_PATH = "server_data"
+
+def send_file(client, filename):
+    filepath=filename
+    if not os.path.isfile(filepath):
+        print("File doesn't exist")
+        return
+    filesize=os.path.getsize(filepath)
+    filename=os.path.basename(filename).encode(FORMAT)
+    client.sendall(struct.pack.("!I", len(filename)))
+    client.sendall(filename)
+    client.sendall(struct.pack("!Q", filesize))
+    with open(filepath, "rb") as file:
+        while True:
+            data=file.read(SIZE)
+            if not data:
+                break
+            client.sendall(data)
+    print("File uploaded successfully")
 
 def main():
     
@@ -33,7 +51,13 @@ def main():
             client.send(cmd.encode(FORMAT))
 
         elif cmd == "UPLOAD":
-            client.send(cmd.encode(FORMAT))
+            filename=input(Enter filename: ")
+            client.sendall(b"UPLOAD")
+            response=client.recv(SIZE).decode(FORMAT)
+            if response=="READY":
+                send_file(client, filename)
+            else:
+                print(response)
 
         elif cmd == "DOWNLOAD":
             client.send(cmd.encode(FORMAT))
