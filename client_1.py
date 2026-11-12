@@ -28,6 +28,32 @@ def send_file(client, filename):
             client.sendall(data)
     print("File uploaded successfully")
 
+def receive_file(client):
+    filename_length=struct.unpack("!I", recv_exact(client, 4))[0]
+    filename=recv_exact(client, filename_length).decode(FORMAT)
+    filename=os.path.basename(filename)
+    filesize=struct.unpack("!Q", recv_exact(client, 8))[0]
+    os.makedirs("client_data", exist_ok=True)
+    filepath=os.path.join("client_data", filename)
+    received=0
+    with open(filepath, "wb") as file:
+        while received<filesize:
+            data=client.recv(min(SIZE, filesize-received))
+            if not data:
+                raise ConnectionError("Connection lost")
+            file.write(data)
+            received+=len(data)
+    print(f"{filename} downloaded successfully")
+
+def recv_exact(conn, length):
+    data=b""
+    while len(data)<length:
+        packet=conn.recv(length-len(data))
+        if not packet:
+            raise ConnectionError("Connection lost")
+        data+=packet
+    return data
+
 def main():
     
     client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -60,7 +86,18 @@ def main():
                 print(response)
 
         elif cmd == "DOWNLOAD":
-            client.send(cmd.encode(FORMAT))
+            filename=input("Enter filename: ")
+            client.sendall(b"DOWNLOAD")
+            response=client.recv(SIZE).decode(FORMAT)
+            if response=="READY":
+                client.sendall(filename.encode(FORMAT))
+                response=client.recv(SIZE).decode(FORMAT)
+                if response=="FILE":
+                    receive_file(client)
+                else:
+                    print(response)
+            else:
+                print(response)
 
         elif cmd == "DELETE":
             client.send(cmd.encode(FORMAT))
