@@ -90,6 +90,17 @@ def handle_client (conn,addr):
                         conn.sendall(data)
                 print(f"[DOWNLOAD] Sent {filename}")
 
+        elif cmd == "DELETE":
+            filename=data[1]
+            filename=os.path.basename(filename)
+            filepath=os.path.join(SERVER_PATH, filename)
+            if os.path.isfile(filepath):
+                os.remove(filepath)
+                send_data+=f"{filename} deleted successfully"
+            else:
+                send_data="ERROR@File not found"
+            conn.sendall(send_data.encode(FORMAT))
+
         elif cmd == "TASK": 
             send_data += "LOGOUT from the server.\n"
 
