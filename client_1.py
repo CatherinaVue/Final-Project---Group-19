@@ -106,7 +106,11 @@ def main():
             print(response)
 
         elif cmd == "DIR":
-            client.send(cmd.encode(FORMAT))
+            client.sendall(b"DIR")
+            response=client.recv(SIZE).decode(FORMAT)
+            print("\n=== SERVER DIRECTORY ===")
+            print(response)
+            print("========================")
 
         elif cmd == "SUBCREATE":
             client.send(cmd.encode(FORMAT))
