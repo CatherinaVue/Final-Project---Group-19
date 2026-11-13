@@ -113,10 +113,16 @@ def main():
             print("========================")
 
         elif cmd == "SUBCREATE":
-            client.send(cmd.encode(FORMAT))
+            foldername=input("Enter folder name: ")
+            client.sendall(f"SUBCREATE@{foldername}".encode(FORMAT))
+            response=client.recv(SIZE).decode(FORMAT)
+            print(response)
 
         elif cmd == "SUBDELETE":
-            client.send(cmd.encode(FORMAT))
+            foldername=input("Enter folder name: ")
+            client.sendall(f"SUBDELETE@{foldername}".encode(FORMAT))
+            response=client.recv(SIZE).decode(FORMAT)
+            print(response)
 
         elif cmd == "LOGOUT":
             client.send(cmd.encode(FORMAT))
