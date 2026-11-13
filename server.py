@@ -109,6 +109,31 @@ def handle_client (conn,addr):
                 send_data+="\n".join(files)
             conn.sendall(send_data.encode(FORMAT))
 
+        elif cmd == "SUBCREATE":
+            foldername=data[1]
+            foldername=os.path.basename(foldername)
+            folderpath=os.path.join(SERVER_PATH, foldername)
+            if not os.path.exists(foldepath):
+                os.makedirs(folderpath)
+                send_data+=f"'{foldername}' created successfully"
+            else:
+                send_data+=f"'{foldername}' already exists"
+            conn.sendall(send_data.encode(FORMAT))
+
+        elif cmd == "SUBDELETE":
+            foldername=data[1]
+            foldername=os.path.basename(foldername)
+            folderpath=os.path.join(SERVER_PATH, foldername)
+            if os.path.isdir(folderpath) and not os.path.islink(folderpath):
+                try:
+                    os.rmdir(folderpath)
+                    send_data+=f"'{foldername}' deleted successfully"
+                except OSError:
+                    send_data+=f"'{foldername}' is not empty"
+            else:
+                send_data+=f"'{foldername}' doesn't exist"
+            conn.sendall(send_data.encode(FORMAT))
+
         elif cmd == "TASK": 
             send_data += "LOGOUT from the server.\n"
 
