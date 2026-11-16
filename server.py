@@ -34,7 +34,7 @@ def handle_client (conn,addr):
     if username == "Client1" and password == "1234":
         conn.send("OK@Login successful!".encode(FORMAT))
         print(f"{username} logged in.")
-        print("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================")
+        menu = print("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================")
         conn.send(f"MENU@{menu}".encode(FORMAT))
     else:
         conn.send("ERROR@Invalid username or password".encode(FORMAT))
