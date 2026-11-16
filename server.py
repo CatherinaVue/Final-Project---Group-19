@@ -23,7 +23,6 @@ def recv_exact(conn, length):
 def handle_client (conn,addr):
 
     print(f"[NEW CONNECTION] {addr} connected.")
-    conn.send("OK@Welcome to the server".encode(FORMAT))
 ### Ask Clients for User and Pass
     conn.send("AUTH@Username: ".encode(FORMAT))
     username = conn.recv(SIZE).decode(FORMAT).strip()
