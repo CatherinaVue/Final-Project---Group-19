@@ -69,65 +69,68 @@ def main():
             print(f"{msg}")
             answer = input(msg).strip()
             client.send(answer.encode(FORMAT))
+            break
 
         data = input("> ") 
         data = data.split(" ")
         cmd = data[0]
 
-        if cmd == "TASK":
-            client.send(cmd.encode(FORMAT))
-
-        elif cmd == "UPLOAD":
-            filename=input("Enter filename: ")
-            client.sendall(b"UPLOAD")
-            response=client.recv(SIZE).decode(FORMAT)
-            if response=="READY":
-                send_file(client, filename)
-            else:
-                print(response)
-
-        elif cmd == "DOWNLOAD":
-            filename=input("Enter filename: ")
-            client.sendall(b"DOWNLOAD")
-            response=client.recv(SIZE).decode(FORMAT)
-            if response=="READY":
-                client.sendall(filename.encode(FORMAT))
+        if data == "OK@Login successful!":
+            cmd == input("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================").strip().upper()
+            if cmd == "TASK":
+                client.send(cmd.encode(FORMAT))
+    
+            elif cmd == "UPLOAD":
+                filename=input("Enter filename: ")
+                client.sendall(b"UPLOAD")
                 response=client.recv(SIZE).decode(FORMAT)
-                if response=="FILE":
-                    receive_file(client)
+                if response=="READY":
+                    send_file(client, filename)
                 else:
                     print(response)
-            else:
+    
+            elif cmd == "DOWNLOAD":
+                filename=input("Enter filename: ")
+                client.sendall(b"DOWNLOAD")
+                response=client.recv(SIZE).decode(FORMAT)
+                if response=="READY":
+                    client.sendall(filename.encode(FORMAT))
+                    response=client.recv(SIZE).decode(FORMAT)
+                    if response=="FILE":
+                        receive_file(client)
+                    else:
+                        print(response)
+                else:
+                    print(response)
+    
+            elif cmd == "DELETE":
+                filename=input("Enter filename: ")
+                client.sendall(f"DELETE@{filename}".encode(FORMAT))
+                response=client.recv(SIZE).decode(FORMAT)
                 print(response)
-
-        elif cmd == "DELETE":
-            filename=input("Enter filename: ")
-            client.sendall(f"DELETE@{filename}".encode(FORMAT))
-            response=client.recv(SIZE).decode(FORMAT)
-            print(response)
-
-        elif cmd == "DIR":
-            client.sendall(b"DIR")
-            response=client.recv(SIZE).decode(FORMAT)
-            print("\n=== SERVER DIRECTORY ===")
-            print(response)
-            print("========================")
-
-        elif cmd == "SUBCREATE":
-            foldername=input("Enter folder name: ")
-            client.sendall(f"SUBCREATE@{foldername}".encode(FORMAT))
-            response=client.recv(SIZE).decode(FORMAT)
-            print(response)
-
-        elif cmd == "SUBDELETE":
-            foldername=input("Enter folder name: ")
-            client.sendall(f"SUBDELETE@{foldername}".encode(FORMAT))
-            response=client.recv(SIZE).decode(FORMAT)
-            print(response)
-
-        elif cmd == "LOGOUT":
-            client.send(cmd.encode(FORMAT))
-            break
+    
+            elif cmd == "DIR":
+                client.sendall(b"DIR")
+                response=client.recv(SIZE).decode(FORMAT)
+                print("\n=== SERVER DIRECTORY ===")
+                print(response)
+                print("========================")
+    
+            elif cmd == "SUBCREATE":
+                foldername=input("Enter folder name: ")
+                client.sendall(f"SUBCREATE@{foldername}".encode(FORMAT))
+                response=client.recv(SIZE).decode(FORMAT)
+                print(response)
+    
+            elif cmd == "SUBDELETE":
+                foldername=input("Enter folder name: ")
+                client.sendall(f"SUBDELETE@{foldername}".encode(FORMAT))
+                response=client.recv(SIZE).decode(FORMAT)
+                print(response)
+    
+            elif cmd == "LOGOUT":
+                client.send(cmd.encode(FORMAT))
+                break
       
 
 
