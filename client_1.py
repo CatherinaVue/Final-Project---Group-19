@@ -61,21 +61,16 @@ def main():
     while True:  ### multiple communications
         data = client.recv(SIZE).decode(FORMAT)
         cmd, msg = data.split("@")
-        if cmd == "OK":
-            print(f"{msg}")
-        elif cmd == "DISCONNECTED":
-            print(f"{msg}")
-        elif cmd == "AUTH":
-            print(f"{msg}")
-            answer = input(msg).strip()
-            client.send(answer.encode(FORMAT))
-            break
 
         data = input("> ") 
         data = data.split(" ")
-        cmd = data[0]
-
-        if data == "OK@Login successful!":
+        cmd = data[0]    
+        
+        if cmd == "AUTH":
+            answer = input(f"{msg} ").strip()
+            client.send(answer.encode(FORMAT))
+        elif cmd == "OK":
+            print(msg)
             cmd == input("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================").strip().upper()
             if cmd == "TASK":
                 client.send(cmd.encode(FORMAT))
@@ -131,7 +126,9 @@ def main():
             elif cmd == "LOGOUT":
                 client.send(cmd.encode(FORMAT))
                 break
-      
+        elif cmd == "DISCONNECTED":
+            print(msg)
+            break  
 
 
 
