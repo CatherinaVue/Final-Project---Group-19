@@ -1,6 +1,7 @@
 import os
 import socket
 import struct
+import pwinput
 
 # IP = "192.168.1.101" #"localhost"
 IP = "10.200.102.77"
@@ -63,7 +64,7 @@ def main():
         cmd, msg = data.split("@") 
         
         if cmd == "AUTH":
-            answer = input(f"{msg} ").strip()
+            answer = pwinput.pwinput(prompt=f"{msg} ", mask="*").strip()
             client.send(answer.encode(FORMAT))
         elif cmd == "OK":
             print(msg)
