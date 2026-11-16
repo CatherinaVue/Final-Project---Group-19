@@ -60,11 +60,7 @@ def main():
     client.connect(ADDR)
     while True:  ### multiple communications
         data = client.recv(SIZE).decode(FORMAT)
-        cmd, msg = data.split("@")
-
-        data = input("> ") 
-        data = data.split(" ")
-        cmd = data[0]    
+        cmd, msg = data.split("@") 
         
         if cmd == "AUTH":
             answer = input(f"{msg} ").strip()
@@ -72,6 +68,9 @@ def main():
         elif cmd == "OK":
             print(msg)
             cmd == input("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================").strip().upper()
+            data = input("> ") 
+            data = data.split(" ")
+            cmd = data[0]   
             if cmd == "TASK":
                 client.send(cmd.encode(FORMAT))
     
