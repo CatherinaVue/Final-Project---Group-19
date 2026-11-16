@@ -66,8 +66,6 @@ def main():
         elif cmd == "DISCONNECTED":
             print(f"{msg}")
             break
-
-        print("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================")
         
         data = input("> ") 
         data = data.split(" ")
