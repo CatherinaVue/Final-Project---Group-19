@@ -67,7 +67,7 @@ def main():
             print(f"{msg}")
             break
 
-        printf("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================")
+        print("=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================")
         
         data = input("> ") 
         data = data.split(" ")
@@ -77,7 +77,7 @@ def main():
             client.send(cmd.encode(FORMAT))
 
         elif cmd == "UPLOAD":
-            filename=input(Enter filename: ")
+            filename=input("Enter filename: ")
             client.sendall(b"UPLOAD")
             response=client.recv(SIZE).decode(FORMAT)
             if response=="READY":
