@@ -31,7 +31,7 @@ def handle_client (conn,addr):
     conn.send("AUTH@Password: ".encode(FORMAT))
     password = conn.recv(SIZE).decode(FORMAT)
 
-    if username == "Client1" and password == 1234:
+    if username == "Client1" and password == "1234":
         conn.send("OK@Login successful!".encode(FORMAT))
         print(f"{username} logged in.")
     else:
@@ -113,7 +113,7 @@ def handle_client (conn,addr):
             foldername=data[1]
             foldername=os.path.basename(foldername)
             folderpath=os.path.join(SERVER_PATH, foldername)
-            if not os.path.exists(foldepath):
+            if not os.path.exists(folderpath):
                 os.makedirs(folderpath)
                 send_data+=f"'{foldername}' created successfully"
             else:
