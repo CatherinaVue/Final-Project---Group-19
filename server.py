@@ -66,6 +66,7 @@ def handle_client (conn,addr):
                     file.write(data)
                     received+=len(data)
             print(f"[UPLOAD] Received {filename}")
+            conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "DOWNLOAD":
             conn.sendall(b"READY")
@@ -88,6 +89,7 @@ def handle_client (conn,addr):
                             break
                         conn.sendall(data)
                 print(f"[DOWNLOAD] Sent {filename}")
+            conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "DELETE":
             filename=data[1]
@@ -99,6 +101,7 @@ def handle_client (conn,addr):
             else:
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
+            conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "DIR":
             files=os.listdir(SERVER_PATH)
@@ -107,6 +110,7 @@ def handle_client (conn,addr):
             else:
                 send_data+="\n".join(files)
             conn.sendall(send_data.encode(FORMAT))
+            conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "SUBCREATE":
             foldername=data[1]
@@ -118,6 +122,7 @@ def handle_client (conn,addr):
             else:
                 send_data+=f"'{foldername}' already exists"
             conn.sendall(send_data.encode(FORMAT))
+            conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "SUBDELETE":
             foldername=data[1]
@@ -132,6 +137,7 @@ def handle_client (conn,addr):
             else:
                 send_data+=f"'{foldername}' doesn't exist"
             conn.sendall(send_data.encode(FORMAT))
+            conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "TASK": 
             send_data += "LOGOUT from the server.\n"
