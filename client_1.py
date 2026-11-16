@@ -17,7 +17,7 @@ def send_file(client, filename):
         return
     filesize=os.path.getsize(filepath)
     filename=os.path.basename(filename).encode(FORMAT)
-    client.sendall(struct.pack.("!I", len(filename)))
+    client.sendall(struct.pack("!I", len(filename)))
     client.sendall(filename)
     client.sendall(struct.pack("!Q", filesize))
     with open(filepath, "rb") as file:
