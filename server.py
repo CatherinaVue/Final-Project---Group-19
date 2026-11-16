@@ -26,10 +26,10 @@ def handle_client (conn,addr):
     conn.send("OK@Welcome to the server".encode(FORMAT))
 ### Ask Clients for User and Pass
     conn.send("AUTH@Username: ".encode(FORMAT))
-    username = conn.recv(SIZE).decode(FORMAT)
+    username = conn.recv(SIZE).decode(FORMAT).strip()
 
     conn.send("AUTH@Password: ".encode(FORMAT))
-    password = conn.recv(SIZE).decode(FORMAT)
+    password = conn.recv(SIZE).decode(FORMAT).strip()
 
     if username == "Client1" and password == "1234":
         conn.send("OK@Login successful!".encode(FORMAT))
