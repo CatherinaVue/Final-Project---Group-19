@@ -65,8 +65,11 @@ def main():
             print(f"{msg}")
         elif cmd == "DISCONNECTED":
             print(f"{msg}")
-            break
-        
+        elif cmd == "AUTH":
+            print(f"{msg}")
+            answer = input(msg).strip()
+            client.send(answer.encode(FORMAT))
+
         data = input("> ") 
         data = data.split(" ")
         cmd = data[0]
