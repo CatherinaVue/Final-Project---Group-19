@@ -97,7 +97,7 @@ def handle_client (conn,addr):
             filepath=os.path.join(SERVER_PATH, filename)
             if os.path.isfile(filepath):
                 os.remove(filepath)
-                send_data+=f"OK@{filename} deleted successfully by {username}"
+                conn.send(f"OK@{filename} deleted successfully by {username}".encode(FORMAT))
             else:
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
@@ -106,9 +106,9 @@ def handle_client (conn,addr):
         elif cmd == "DIR":
             files=os.listdir(SERVER_PATH)
             if len(files)==0:
-                send_data += f"OK@{username}, the server directory is empty."
+                conn.send(f"OK@{username}, the server directory is empty.".encode(FORMAT))
             else:
-                send_data += f"OK@{username}, here are the files in the server directory:\n"
+                conn.send(f"OK@{username}, here are the files in the server directory:\n".encode(FORMAT))
                 send_data+="\n".join(files)
             conn.sendall(send_data.encode(FORMAT))
             print(f"[DIR] {username} viewed the server directory")
@@ -119,9 +119,9 @@ def handle_client (conn,addr):
             folderpath=os.path.join(SERVER_PATH, foldername)
             if not os.path.exists(folderpath):
                 os.makedirs(folderpath)
-                send_data+=f"'OK@{foldername}' created successfully by {username}"
+                conn.send(f"'OK@{foldername}' created successfully by {username}".encode(FORMAT))
             else:
-                send_data+=f"'{foldername}' already exists"
+                conn.send(f"'{foldername}' already exists".encode(FORMAT))
             conn.sendall(send_data.encode(FORMAT))
             print(f"[SUBCREATE] {username} created folder {foldername}")
 
@@ -132,11 +132,11 @@ def handle_client (conn,addr):
             if os.path.isdir(folderpath) and not os.path.islink(folderpath):
                 try:
                     os.rmdir(folderpath)
-                    send_data+=f"'OK@{foldername}' deleted successfully by {username}"
+                    conn.send(f"'OK@{foldername}' deleted successfully by {username}".encode(FORMAT))
                 except OSError:
-                    send_data+=f"'{foldername}' is not empty"
+                    conn.send(f"'{foldername}' is not empty".encode(FORMAT))
             else:
-                send_data+=f"'OK@{foldername}' doesn't exist"
+                conn.send(f"'OK@{foldername}' doesn't exist".encode(FORMAT))
             conn.sendall(send_data.encode(FORMAT))
             print(f"[SUBDELETE] {username} deleted folder {foldername}")
 
