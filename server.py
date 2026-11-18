@@ -101,7 +101,7 @@ def handle_client (conn,addr):
             else:
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
-            conn.send(f"OK@{username} deleted {filename} successfully.".encode(FORMAT))
+            print(f"[DELETE] {username} deleted {filename}")
 
         elif cmd == "DIR":
             files=os.listdir(SERVER_PATH)
@@ -111,7 +111,7 @@ def handle_client (conn,addr):
                 send_data += f"{username}, here are the files in the server directory:\n"
                 send_data+="\n".join(files)
             conn.sendall(send_data.encode(FORMAT))
-            conn.send("OK@Next Command".encode(FORMAT))
+            print(f"[DIR] {username} viewed the server directory")
 
         elif cmd == "SUBCREATE":
             foldername=data[1]
@@ -123,7 +123,7 @@ def handle_client (conn,addr):
             else:
                 send_data+=f"'{foldername}' already exists"
             conn.sendall(send_data.encode(FORMAT))
-            conn.send("OK@Next Command".encode(FORMAT))
+            print(f"[SUBCREATE] {username} created folder {foldername}")
 
         elif cmd == "SUBDELETE":
             foldername=data[1]
@@ -138,12 +138,13 @@ def handle_client (conn,addr):
             else:
                 send_data+=f"'{foldername}' doesn't exist"
             conn.sendall(send_data.encode(FORMAT))
-            conn.send("OK@Next Command".encode(FORMAT))
+            print(f"[SUBDELETE] {username} deleted folder {foldername}")
 
         elif cmd == "TASK": 
-            send_data += f"{username} LOGGED OUT from the server.\n"
+            send_data += "LOGGED OUT from the server.\n"
 
             conn.send(send_data.encode(FORMAT))
+            print(f"[TASK] {username} LOGGED OUT from the server.\n")
 
 
 
