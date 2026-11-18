@@ -141,7 +141,7 @@ def handle_client (conn,addr):
             conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "TASK": 
-            send_data += {username} "LOGGED OUT from the server.\n"
+            send_data += f"{username} LOGGED OUT from the server.\n"
 
             conn.send(send_data.encode(FORMAT))
 
