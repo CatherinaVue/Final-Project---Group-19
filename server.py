@@ -30,7 +30,7 @@ def handle_client (conn,addr):
     conn.send("AUTH@Password: ".encode(FORMAT))
     password = conn.recv(SIZE).decode(FORMAT).strip()
 
-    if username == "Client1" or username == "Client2" and password == "1234":
+    if (username == "Client1" or username == "Client2") and password == "1234":
         conn.send("OK@Login successful!".encode(FORMAT))
         print(f"{username} logged in.")
     else:
@@ -66,7 +66,7 @@ def handle_client (conn,addr):
                     file.write(data)
                     received+=len(data)
             print(f"[UPLOAD] Received {filename} from {username}")
-            conn.send("OK@Next Command".encode(FORMAT))
+            conn.send(f"OK@{username} uploaded {filename} successfully.".encode(FORMAT))
 
         elif cmd == "DOWNLOAD":
             conn.sendall(b"READY")
@@ -89,7 +89,7 @@ def handle_client (conn,addr):
                             break
                         conn.sendall(data)
                 print(f"[DOWNLOAD] Sent {filename} from {username}")
-            conn.send("OK@Next Command".encode(FORMAT))
+                conn.send(f"OK@{username} downloaded {filename} successfully.".encode(FORMAT))
 
         elif cmd == "DELETE":
             filename=data[1]
@@ -101,13 +101,14 @@ def handle_client (conn,addr):
             else:
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
-            conn.send("OK@Next Command".encode(FORMAT))
+            conn.send(f"OK@{username} deleted {filename} successfully.".encode(FORMAT))
 
         elif cmd == "DIR":
             files=os.listdir(SERVER_PATH)
             if len(files)==0:
-                send_data+="Server directory is empty"
+                send_data += f"{username}, the server directory is empty."
             else:
+                send_data += f"{username}, here are the files in the server directory:\n"
                 send_data+="\n".join(files)
             conn.sendall(send_data.encode(FORMAT))
             conn.send("OK@Next Command".encode(FORMAT))
