@@ -65,7 +65,7 @@ def handle_client (conn,addr):
                         break
                     file.write(data)
                     received+=len(data)
-            print(f"[UPLOAD] Received {filename}")
+            print(f"[UPLOAD] Received {filename} from {username}")
             conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "DOWNLOAD":
@@ -88,7 +88,7 @@ def handle_client (conn,addr):
                         if not data:
                             break
                         conn.sendall(data)
-                print(f"[DOWNLOAD] Sent {filename}")
+                print(f"[DOWNLOAD] Sent {filename} from {username}")
             conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "DELETE":
@@ -97,7 +97,7 @@ def handle_client (conn,addr):
             filepath=os.path.join(SERVER_PATH, filename)
             if os.path.isfile(filepath):
                 os.remove(filepath)
-                send_data+=f"{filename} deleted successfully"
+                send_data+=f"{filename} deleted successfully by {username}"
             else:
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
@@ -118,7 +118,7 @@ def handle_client (conn,addr):
             folderpath=os.path.join(SERVER_PATH, foldername)
             if not os.path.exists(folderpath):
                 os.makedirs(folderpath)
-                send_data+=f"'{foldername}' created successfully"
+                send_data+=f"'{foldername}' created successfully by {username}"
             else:
                 send_data+=f"'{foldername}' already exists"
             conn.sendall(send_data.encode(FORMAT))
@@ -131,7 +131,7 @@ def handle_client (conn,addr):
             if os.path.isdir(folderpath) and not os.path.islink(folderpath):
                 try:
                     os.rmdir(folderpath)
-                    send_data+=f"'{foldername}' deleted successfully"
+                    send_data+=f"'{foldername}' deleted successfully by {username}"
                 except OSError:
                     send_data+=f"'{foldername}' is not empty"
             else:
@@ -140,7 +140,7 @@ def handle_client (conn,addr):
             conn.send("OK@Next Command".encode(FORMAT))
 
         elif cmd == "TASK": 
-            send_data += "LOGOUT from the server.\n"
+            send_data += {username} "LOGGED OUT from the server.\n"
 
             conn.send(send_data.encode(FORMAT))
 
