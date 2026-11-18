@@ -30,7 +30,7 @@ def handle_client (conn,addr):
     conn.send("AUTH@Password: ".encode(FORMAT))
     password = conn.recv(SIZE).decode(FORMAT).strip()
 
-    if username == "Client1" and password == "1234":
+    if username == "Client1" or username == "Client2" and password == "1234":
         conn.send("OK@Login successful!".encode(FORMAT))
         print(f"{username} logged in.")
     else:
