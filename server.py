@@ -97,7 +97,7 @@ def handle_client (conn,addr):
             filepath=os.path.join(SERVER_PATH, filename)
             if os.path.isfile(filepath):
                 os.remove(filepath)
-                send_data+=f"{filename} deleted successfully by {username}"
+                send_data+=f"OK@{filename} deleted successfully by {username}"
             else:
                 send_data="ERROR@File not found"
             conn.sendall(send_data.encode(FORMAT))
@@ -106,9 +106,9 @@ def handle_client (conn,addr):
         elif cmd == "DIR":
             files=os.listdir(SERVER_PATH)
             if len(files)==0:
-                send_data += f"{username}, the server directory is empty."
+                send_data += f"OK@{username}, the server directory is empty."
             else:
-                send_data += f"{username}, here are the files in the server directory:\n"
+                send_data += f"OK@{username}, here are the files in the server directory:\n"
                 send_data+="\n".join(files)
             conn.sendall(send_data.encode(FORMAT))
             print(f"[DIR] {username} viewed the server directory")
@@ -119,7 +119,7 @@ def handle_client (conn,addr):
             folderpath=os.path.join(SERVER_PATH, foldername)
             if not os.path.exists(folderpath):
                 os.makedirs(folderpath)
-                send_data+=f"'{foldername}' created successfully by {username}"
+                send_data+=f"'OK@{foldername}' created successfully by {username}"
             else:
                 send_data+=f"'{foldername}' already exists"
             conn.sendall(send_data.encode(FORMAT))
@@ -132,16 +132,16 @@ def handle_client (conn,addr):
             if os.path.isdir(folderpath) and not os.path.islink(folderpath):
                 try:
                     os.rmdir(folderpath)
-                    send_data+=f"'{foldername}' deleted successfully by {username}"
+                    send_data+=f"'OK@{foldername}' deleted successfully by {username}"
                 except OSError:
                     send_data+=f"'{foldername}' is not empty"
             else:
-                send_data+=f"'{foldername}' doesn't exist"
+                send_data+=f"'OK@{foldername}' doesn't exist"
             conn.sendall(send_data.encode(FORMAT))
             print(f"[SUBDELETE] {username} deleted folder {foldername}")
 
         elif cmd == "TASK": 
-            send_data += "LOGGED OUT from the server.\n"
+            send_data += "OK@LOGGED OUT from the server.\n"
 
             conn.send(send_data.encode(FORMAT))
             print(f"[TASK] {username} LOGGED OUT from the server.\n")
