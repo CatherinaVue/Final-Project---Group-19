@@ -12,25 +12,25 @@ SIZE = 1024  ## byte .. buffer size
 FORMAT = "utf-8"
 SERVER_DATA_PATH = "server_data"
 
-
+#helper function when sending files
 def send_file(client, filename):
     filepath = filename
 
-    if not os.path.isfile(filepath):
+    if not os.path.isfile(filepath): #checks if file exists
         print("File doesn't exist")
         return
 
     filesize = os.path.getsize(filepath)
     filename = os.path.basename(filename).encode(FORMAT)
 
-    client.sendall(struct.pack("!I", len(filename)))
+    client.sendall(struct.pack("!I", len(filename))) #prepare file structure
     client.sendall(filename)
     client.sendall(struct.pack("!Q", filesize))
 
     # Start measuring upload time
     start_time = time.perf_counter()
 
-    with open(filepath, "rb") as file:
+    with open(filepath, "rb") as file: #open and sending of file data
         while True:
             data = file.read(SIZE)
             if not data:
@@ -51,15 +51,15 @@ def send_file(client, filename):
     print("===========================")
     print("File uploaded successfully")
 
-
+#helper function of receiving a file
 def receive_file(client):
-    filename_length = struct.unpack("!I", recv_exact(client, 4))[0]
+    filename_length = struct.unpack("!I", recv_exact(client, 4))[0] #checks file structure
     filename = recv_exact(client, filename_length).decode(FORMAT)
     filename = os.path.basename(filename)
 
     filesize = struct.unpack("!Q", recv_exact(client, 8))[0]
 
-    os.makedirs("client_data", exist_ok=True)
+    os.makedirs("client_data", exist_ok=True) #client storage space for file
     filepath = os.path.join("client_data", filename)
 
     received = 0
@@ -67,7 +67,7 @@ def receive_file(client):
     # Start measuring download time
     start_time = time.perf_counter()
 
-    with open(filepath, "wb") as file:
+    with open(filepath, "wb") as file: #open and download file
         while received < filesize:
             data = client.recv(min(SIZE, filesize - received))
 
@@ -91,7 +91,7 @@ def receive_file(client):
     print("=============================")
     print(f"{filename} downloaded successfully")
 
-
+#helper function for file sizes
 def recv_exact(conn, length):
     data = b""
     while len(data) < length:
@@ -110,9 +110,9 @@ def main():
         cmd, msg = data.split("@")
 
         if cmd == "AUTH":
-            answer = pwinput.pwinput(prompt=f"{msg} ", mask="*").strip()
+            answer = pwinput.pwinput(prompt=f"{msg} ", mask="*").strip() #security mask for authentication
             client.send(answer.encode(FORMAT))
-        elif cmd == "OK":
+        elif cmd == "OK": # shows command menu
             print(msg)
             print(
                 "=== COMMANDS ===\n1. UPLOAD\n2. DOWNLOAD\n3. DELETE\n4. DIR\n5. SUBCREATE\n6. SUBDELETE\n7. LOGOUT\n================")
@@ -122,74 +122,74 @@ def main():
             if cmd == "TASK":
                 client.send(cmd.encode(FORMAT))
 
-            elif cmd == "UPLOAD":
+            elif cmd == "UPLOAD": #uploading a file
                 filename = input("Enter filename: ")
                 client.sendall(b"UPLOAD")
                 response = client.recv(SIZE).decode(FORMAT)
-                if response == "READY":
+                if response == "READY": #confirms server side is ready for transfer
                     send_file(client, filename)
                 else:
                     print(response)
 
-            elif cmd == "DOWNLOAD":
+            elif cmd == "DOWNLOAD": #downloading a file
                 filename = input("Enter filename: ")
                 client.sendall(b"DOWNLOAD")
                 response = client.recv(SIZE).decode(FORMAT)
-                if response == "READY":
+                if response == "READY": #confirms server side for file transfer
                     client.sendall(filename.encode(FORMAT))
                     response = client.recv(SIZE).decode(FORMAT)
-                    if response == "FILE":
+                    if response == "FILE": #receives file when sent
                         receive_file(client)
                     else:
                         print(response)
                 else:
                     print(response)
 
-            elif cmd == "DELETE":
+            elif cmd == "DELETE": #deleting a file
                 filename = input("Enter filename: ")
                 start_time = time.perf_counter()
-                client.sendall(f"DELETE@{filename}".encode(FORMAT))
+                client.sendall(f"DELETE@{filename}".encode(FORMAT)) #sends command to server
                 response = client.recv(SIZE).decode(FORMAT)
                 end_time = time.perf_counter()
                 response_time = (end_time - start_time) * 1000
-                print(response)
+                print(response) #when command finishes
                 print(f"System response time: {response_time:.2f} ms")
 
 
-            elif cmd == "DIR":
+            elif cmd == "DIR": #viewing file directory
                 start_time = time.perf_counter()
                 client.sendall(b"DIR")
                 response = client.recv(SIZE).decode(FORMAT)
                 end_time = time.perf_counter()
                 response_time = (end_time - start_time) * 1000
                 print("\n=== SERVER DIRECTORY ===")
-                print(response)
+                print(response) #shows files sent from server
                 print("========================")
                 print(f"System response time: {response_time:.2f} ms")
 
-            elif cmd == "SUBCREATE":
+            elif cmd == "SUBCREATE": #creating a subfolder
                 foldername = input("Enter folder name: ")
                 start_time = time.perf_counter()
-                client.sendall(f"SUBCREATE@{foldername}".encode(FORMAT))
+                client.sendall(f"SUBCREATE@{foldername}".encode(FORMAT)) #sends command for name of subfolder creation
                 response = client.recv(SIZE).decode(FORMAT)
                 end_time = time.perf_counter()
                 response_time = (end_time - start_time) * 1000
-                print(response)
+                print(response) #confirm when command complete
                 print(f"System response time: {response_time:.2f} ms")
 
-            elif cmd == "SUBDELETE":
+            elif cmd == "SUBDELETE": #deleting a subfolder
                 foldername = input("Enter folder name: ")
                 start_time = time.perf_counter()
-                client.sendall(f"SUBDELETE@{foldername}".encode(FORMAT))
+                client.sendall(f"SUBDELETE@{foldername}".encode(FORMAT)) #checks server for subfolder name to delete
                 response = client.recv(SIZE).decode(FORMAT)
                 end_time = time.perf_counter()
                 response_time = (end_time - start_time) * 1000
-                print(response)
+                print(response) #confirm when command complete
                 print(f"System response time: {response_time:.2f} ms")
 
-            elif cmd == "LOGOUT":
+            elif cmd == "LOGOUT": #to disconnect client from server
                 client.send(cmd.encode(FORMAT))
-                break
+                break #ends connection
         elif cmd == "DISCONNECTED":
             print(msg)
             break
